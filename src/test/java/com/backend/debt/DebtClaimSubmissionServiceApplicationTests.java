@@ -1,4 +1,4 @@
-package com.backend.app.debt;
+package com.backend.debt;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

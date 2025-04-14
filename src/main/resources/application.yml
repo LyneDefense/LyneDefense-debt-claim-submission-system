@@ -1,0 +1,47 @@
+server:
+  port: 9001
+
+spring:
+  application:
+    name: debt-claim-submission-service
+  profiles:
+    active: local
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/debt_claim_submission_db
+    username: postgres
+    password: 123456
+  flyway:
+    clean-disabled: true
+    enabled: true
+  servlet:
+    multipart:
+      max-file-size: 128MB  # ?????????
+      max-request-size: 128MB  # ????????
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-handlers-package: com.backend.debt.mapper.handler
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+  #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type: ASSIGN_ID
+      logic-delete-value: true
+      logic-not-delete-value: false
+  type-aliases-package: com.backend.debt.pojo
+
+swagger:
+  enable: true
