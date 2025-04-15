@@ -35,7 +35,7 @@ public class ClaimDetailDto {
 
 
   /** 申报金额合计（自动计算字段） */
-  private Double getDeclaredTotal() {
+  public Double getDeclaredTotal() {
     return this.declaredPrincipal + this.declaredInterest + this.declaredOther;
   }
 }

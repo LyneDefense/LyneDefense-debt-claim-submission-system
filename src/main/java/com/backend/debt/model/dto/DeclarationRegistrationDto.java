@@ -58,7 +58,7 @@ public class DeclarationRegistrationDto {
   @Valid private ContactInfoDto creditorContactInfo;
 
   /** 申报详情 */
-  private List<ClaimDetailDto> claimDetail;
+  private List<ClaimDetailDto> claimDetails;
 
   /** ----------------------以下为统计信息--------------------- */
   private List<BaseConfirmStatisticDto> confirmStatistics;

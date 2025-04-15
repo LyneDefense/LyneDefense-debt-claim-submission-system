@@ -12,7 +12,7 @@
         <result property="auditor" column="dr_auditor"/>
         <result property="claimCategory" column="dr_claim_category"/>
         <result property="materialStatus" column="dr_material_status"/>
-        
+
         <!-- 代理人信息映射，一对一关系 -->
         <association property="agent" javaType="com.backend.debt.model.dto.AgentDto">
             <id property="id" column="a_id"/>
@@ -21,7 +21,7 @@
             <result property="phone" column="a_phone"/>
             <result property="address" column="a_address"/>
         </association>
-        
+
         <!-- 收件信息映射，一对一关系 -->
         <association property="creditorContactInfo" javaType="com.backend.debt.model.dto.ContactInfoDto">
             <id property="id" column="ci_id"/>
@@ -30,7 +30,7 @@
             <result property="recipientAddress" column="ci_recipient_address"/>
             <result property="email" column="ci_email"/>
         </association>
-        
+
         <!-- 债权人信息映射，一对多关系 -->
         <collection property="creditors" ofType="com.backend.debt.model.dto.CreditorDto">
             <id property="id" column="c_id"/>
@@ -39,9 +39,9 @@
             <result property="phone" column="c_phone"/>
             <result property="address" column="c_address"/>
         </collection>
-        
+
         <!-- 申报详情映射，一对多关系 -->
-        <collection property="claimDetail" ofType="com.backend.debt.model.dto.ClaimDetailDto">
+        <collection property="claimDetails" ofType="com.backend.debt.model.dto.ClaimDetailDto">
             <id property="id" column="cd_id"/>
             <result property="claimNature" column="cd_claim_nature"/>
             <result property="collateralDetails" column="cd_collateral_details"/>
@@ -49,7 +49,7 @@
             <result property="declaredInterest" column="cd_declared_interest"/>
             <result property="declaredOther" column="cd_declared_other"/>
             <result property="reviewStatus" column="cd_review_status"/>
-            
+
             <!-- 申报确认信息映射，一对一关系 -->
             <association property="declaredConfirmInfo" javaType="com.backend.debt.model.dto.DeclaredConfirmInfoDto">
                 <id property="id" column="dci_id"/>
@@ -63,7 +63,7 @@
             </association>
         </collection>
     </resultMap>
-    
+
     <!-- 根据ID查询债权申报详情 -->
     <select id="getDeclarationDetailById" resultMap="DeclarationDetailResultMap">
         SELECT
@@ -75,28 +75,28 @@
             dr.auditor as dr_auditor,
             dr.claim_category as dr_claim_category,
             dr.material_status as dr_material_status,
-            
+
             <!-- 代理人信息字段 -->
             a.id as a_id,
             a.name as a_name,
             a.identification_number as a_identification_number,
             a.phone as a_phone,
             a.address as a_address,
-            
+
             <!-- 收件信息字段 -->
             ci.id as ci_id,
             ci.recipient_name as ci_recipient_name,
             ci.recipient_phone as ci_recipient_phone,
             ci.recipient_address as ci_recipient_address,
             ci.email as ci_email,
-            
+
             <!-- 债权人信息字段 -->
             c.id as c_id,
             c.name as c_name,
             c.identification_number as c_identification_number,
             c.phone as c_phone,
             c.address as c_address,
-            
+
             <!-- 申报详情字段 -->
             cd.id as cd_id,
             cd.claim_nature as cd_claim_nature,
@@ -105,7 +105,7 @@
             cd.declared_interest as cd_declared_interest,
             cd.declared_other as cd_declared_other,
             cd.review_status as cd_review_status,
-            
+
             <!-- 申报确认信息字段 -->
             dci.id as dci_id,
             dci.review_status as dci_review_status,
@@ -126,4 +126,4 @@
             dr.id = #{id}
             AND dr.deleted = false
     </select>
-</mapper> 
+</mapper>

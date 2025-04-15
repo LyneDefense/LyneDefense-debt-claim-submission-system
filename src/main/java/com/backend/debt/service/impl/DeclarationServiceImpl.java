@@ -114,10 +114,9 @@ public class DeclarationServiceImpl implements DeclarationService {
 
   @Override
   public DeclarationRegistrationDto getDeclarationById(String id) {
-    // 使用自定义Mapper方法，通过XML配置的多表联查获取债权申报详情
     DeclarationRegistrationDto declarationDto =
         declarationRegistrationMapper.getDeclarationDetailById(id);
-
+    // 根据已有的数据计算统计数据
     if (declarationDto == null) {
       // 如果找不到记录，可以考虑抛出自定义异常
       // throw new CustomException("未找到指定ID的债权申报信息");

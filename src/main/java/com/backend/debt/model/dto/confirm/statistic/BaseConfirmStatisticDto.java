@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -26,7 +28,7 @@ import lombok.Setter;
 public class BaseConfirmStatisticDto {
 
   /** 确认类型 */
-  private ReviewStatus reviewStatus;
+  private List<ReviewStatus> reviewStatus;
 
   /** 本金 */
   private Double principal;
@@ -38,7 +40,7 @@ public class BaseConfirmStatisticDto {
   private Double other;
 
   /** 笔数 */
-  private Double count;
+  private Integer count;
 
   private Double getTotal() {
     return this.principal + this.interest + this.other;

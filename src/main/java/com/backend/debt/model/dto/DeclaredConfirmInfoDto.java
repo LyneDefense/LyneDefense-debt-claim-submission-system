@@ -34,7 +34,7 @@ public class DeclaredConfirmInfoDto {
   /** 审查理由 */
   private String reviewReason;
 
-  private Double getConfirmedTotal() {
+  public Double getConfirmedTotal() {
     return this.confirmedPrincipal
         + this.confirmedInterest
         + this.confirmedOther
