@@ -16,11 +16,10 @@ public class CreditorEntity extends BaseEntity {
   @TableId(value = "id", type = IdType.ASSIGN_UUID)
   private String id;
 
-  /** 关联的declaration_registration表ID */
-  private String declarationId;
+  /** 关联的claim_detail表ID */
+  private String claimId;
 
   /** 债权人姓名 */
-  @TableField("name")
   private String name;
 
   /** 证件号码 */

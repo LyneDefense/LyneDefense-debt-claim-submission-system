@@ -1,12 +1,12 @@
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://host.docker.internal:5432/debt_claim_submission_db?sslmode=disable
+    url: jdbc:postgresql://host.docker.internal:5432/claim?sslmode=disable
     username: ${SPRING_DATASOURCE_USERNAME}
     password: ${SPRING_DATASOURCE_PASSWORD}
   flyway:
     clean-disabled: true
-    enabled: true
+    enabled: false
 springdoc:
   api-docs:
     enabled: false

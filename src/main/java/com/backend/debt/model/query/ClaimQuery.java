@@ -1,6 +1,9 @@
-package com.backend.debt.model.dto;
+package com.backend.debt.model.query;
 
 import com.backend.debt.enums.ClaimType;
+import com.backend.debt.model.dto.AgentDto;
+import com.backend.debt.model.dto.ContactInfoDto;
+import com.backend.debt.model.dto.CreditorDto;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
@@ -8,41 +11,21 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Schema(description = "债权详情DTO，包含债权申报的完整信息")
-public class ClaimDetailDto {
+@Data
+@Schema(description = "债权请求参数")
+public class ClaimQuery {
 
-  @Schema(description = "债权ID", example = "1234567890abcdef")
-  private String id;
-
-  @Schema(description = "债权编号", required = true, example = "CLAIM-2023-001")
-  @NotNull
-  @NotEmpty
+  @Schema(description = "债权编号", example = "CLAIM-2023-001")
   private String claimNumber;
 
-  @Schema(description = "登记人", required = true, example = "张三")
-  @NotNull
-  @NotEmpty
+  @Schema(description = "登记人", example = "张三")
   private String registrar;
 
-  @Schema(
-      description = "申报日期",
-      required = true,
-      type = "string",
-      example = "2023-01-01",
-      format = "date")
-  @NotNull
+  @Schema(description = "申报日期", type = "string", example = "2023-01-01", format = "date")
   @JsonDeserialize(using = LocalDateDeserializer.class)
   @JsonSerialize(using = LocalDateSerializer.class)
   private LocalDate claimDate;
@@ -69,13 +52,4 @@ public class ClaimDetailDto {
   @Schema(description = "收件信息")
   @Valid
   private ContactInfoDto creditorContactInfo;
-
-  @Schema(description = "申报详情列表")
-  private List<ClaimFillingDto> claimFillings;
-
-  @Schema(description = "债权确认信息列表")
-  private List<ClaimConfirmDto> claimConfirms;
-
-  @Schema(description = "申报金额汇总")
-  private DeclaredSummaryDto declaredSummary;
 }

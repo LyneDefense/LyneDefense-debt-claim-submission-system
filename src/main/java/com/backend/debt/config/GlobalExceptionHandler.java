@@ -1,6 +1,5 @@
 package com.backend.debt.config;
 
-
 import com.backend.debt.exceptions.CustomException;
 import com.backend.debt.model.Resp;
 import lombok.extern.slf4j.Slf4j;
@@ -14,12 +13,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-/** 
+/**
  * 全局异常处理器
- * <p>
- * 该类负责捕获并处理应用程序中抛出的各种异常，将其转换为统一的响应格式返回给客户端。
- * 通过集中处理异常，可以提供一致的错误响应，减少重复代码，并进行统一的日志记录。
- * </p>
+ *
+ * <p>该类负责捕获并处理应用程序中抛出的各种异常，将其转换为统一的响应格式返回给客户端。 通过集中处理异常，可以提供一致的错误响应，减少重复代码，并进行统一的日志记录。
  */
 @RestControllerAdvice
 @Slf4j
@@ -50,7 +47,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler({MethodArgumentNotValidException.class, BindException.class})
   public Resp<Void> handleValidationException(Exception ex) {
     String errorMessage = "参数验证失败";
-    
+
     if (ex instanceof MethodArgumentNotValidException) {
       MethodArgumentNotValidException validException = (MethodArgumentNotValidException) ex;
       if (validException.getBindingResult().getFieldError() != null) {
@@ -62,7 +59,7 @@ public class GlobalExceptionHandler {
         errorMessage = bindException.getBindingResult().getFieldError().getDefaultMessage();
       }
     }
-    
+
     log.error("参数验证异常: {}", errorMessage, ex);
     return Resp.error(HttpStatus.BAD_REQUEST.value(), errorMessage);
   }

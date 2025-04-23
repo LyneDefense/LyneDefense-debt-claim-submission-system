@@ -11,19 +11,31 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SuspendConfirmStatisticDto extends BaseConfirmStatisticDto {
+public class SuspendConfirmStatisticDto {
+
+  /** 确认类型 */
+  private List<ReviewStatus> reviewStatus;
+
+  /** 本金 */
+  private Double principal;
+
+  /** 利息 */
+  private Double interest;
+
+  /** 其他 */
+  private Double other;
+
+  /** 笔数 */
+  private Integer count;
 
   /** 暂缓确认性质 */
   private String suspendNature;
 
-  public SuspendConfirmStatisticDto(
-      List<ReviewStatus> reviewStatus,
-      Double principal,
-      Double interest,
-      Double other,
-      Integer count,
-      String suspendNature) {
-    super(reviewStatus, principal, interest, other, count);
-    this.suspendNature = suspendNature;
+  private Double getTotal() {
+    return this.principal + this.interest + this.other;
+  }
+
+  public static SuspendConfirmStatisticDto defaultEmpty() {
+    return new SuspendConfirmStatisticDto(List.of(), 0.0, 0.0, 0.0, 0, "");
   }
 }

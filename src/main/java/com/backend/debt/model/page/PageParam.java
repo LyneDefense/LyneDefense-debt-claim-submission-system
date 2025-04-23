@@ -1,11 +1,12 @@
 package com.backend.debt.model.page;
 
-import java.io.Serializable;
-
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
+import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class PageParam implements Serializable {
 
   private static final Integer PAGE_NO = 1;
@@ -14,13 +15,10 @@ public class PageParam implements Serializable {
   @NotNull private Integer pageNo = PAGE_NO;
 
   @NotNull private Integer pageSize = PAGE_SIZE;
-  
-  /**
-   * 默认构造函数
-   */
-  public PageParam() {
-  }
-  
+
+  /** 默认构造函数 */
+  public PageParam() {}
+
   /**
    * 带参数的构造函数
    *

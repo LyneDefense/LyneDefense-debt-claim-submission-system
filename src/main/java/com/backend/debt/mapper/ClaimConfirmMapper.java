@@ -1,0 +1,8 @@
+package com.backend.debt.mapper;
+
+import com.backend.debt.model.entity.ClaimConfirmEntity;
+import org.apache.ibatis.annotations.Mapper;
+
+/** 申报确认信息Mapper接口 */
+@Mapper
+public interface ClaimConfirmMapper extends BaseMapperX<ClaimConfirmEntity> {}

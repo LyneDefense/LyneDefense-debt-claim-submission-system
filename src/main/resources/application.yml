@@ -1,5 +1,7 @@
 server:
   port: 9001
+  servlet:
+    context-path: /api/claim
 
 spring:
   application:
@@ -10,12 +12,12 @@ spring:
     property-naming-strategy: SNAKE_CASE
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/debt_claim_submission_db
+    url: jdbc:postgresql://localhost:5432/claim
     username: postgres
     password: 123456
   flyway:
     clean-disabled: true
-    enabled: true
+    enabled: false
   servlet:
     multipart:
       max-file-size: 128MB  # ?????????
