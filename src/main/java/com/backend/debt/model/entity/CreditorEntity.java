@@ -1,14 +1,17 @@
 package com.backend.debt.model.entity;
 
+import com.backend.debt.enums.IdTypeEnum;
 import com.baomidou.mybatisplus.annotation.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import lombok.experimental.Accessors;
 
 /** 债权人信息表实体类 */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @TableName("creditor")
 public class CreditorEntity extends BaseEntity {
 
@@ -30,4 +33,7 @@ public class CreditorEntity extends BaseEntity {
 
   /** 联系地址 */
   private String address;
+
+  /** 证件类型 */
+  private IdTypeEnum idType;
 }

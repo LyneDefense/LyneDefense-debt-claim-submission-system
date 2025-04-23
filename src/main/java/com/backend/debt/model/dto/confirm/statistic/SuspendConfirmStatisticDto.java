@@ -1,6 +1,7 @@
 package com.backend.debt.model.dto.confirm.statistic;
 
 import com.backend.debt.enums.ReviewStatus;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -31,8 +32,14 @@ public class SuspendConfirmStatisticDto {
   /** 暂缓确认性质 */
   private String suspendNature;
 
-  private Double getTotal() {
-    return this.principal + this.interest + this.other;
+  @JsonProperty("total")
+  public Double getTotal() {
+    return addNullSafe(this.principal, addNullSafe(this.interest, this.other));
+  }
+
+  /** 空值安全的加法运算，如果任一参数为null，视为0 */
+  private Double addNullSafe(Double a, Double b) {
+    return (a == null ? 0.0 : a) + (b == null ? 0.0 : b);
   }
 
   public static SuspendConfirmStatisticDto defaultEmpty() {

@@ -1,5 +1,6 @@
 package com.backend.debt.model.dto;
 
+import com.backend.debt.model.entity.ClaimEntity;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
@@ -8,7 +9,11 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.time.LocalDate;
 import java.util.List;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 债权申报与债权人信息DTO
@@ -16,6 +21,9 @@ import lombok.Data;
  * <p>包含债权申报基本信息和关联的债权人列表
  */
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @ApiModel(value = "债权申报与债权人信息")
 public class ClaimSimpleDto {
 
@@ -52,4 +60,17 @@ public class ClaimSimpleDto {
   /** 债权人列表 */
   @ApiModelProperty(value = "债权人列表")
   private List<CreditorDto> creditors;
+
+  /** 不包含creditors信息 */
+  public static ClaimSimpleDto of(ClaimEntity claimEntity) {
+    return ClaimSimpleDto.builder()
+        .id(claimEntity.getId())
+        .claimNumber(claimEntity.getClaimNumber())
+        .registrar(claimEntity.getRegistrar())
+        .claimDate(claimEntity.getClaimDate())
+        .auditor(claimEntity.getAuditor())
+        .claimCategory(claimEntity.getClaimCategory())
+        .materialStatus(claimEntity.getMaterialStatus())
+        .build();
+  }
 }

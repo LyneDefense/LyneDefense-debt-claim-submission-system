@@ -1,19 +1,27 @@
 package com.backend.debt.model.entity;
 
+import com.backend.debt.mapper.handler.StringListTypeHandler;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.LocalDate;
 import java.util.List;
 import javax.validation.constraints.NotEmpty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 /** 代理人信息表实体类 */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @TableName("claim")
 public class ClaimEntity extends BaseEntity {
 
@@ -31,6 +39,7 @@ public class ClaimEntity extends BaseEntity {
   private LocalDate claimDate;
 
   /** 申报形式 */
+  @TableField(typeHandler = StringListTypeHandler.class)
   private List<String> claimTypes;
 
   /** 分配审核人员 */

@@ -1,6 +1,7 @@
 package com.backend.debt.model.dto;
 
 import com.backend.debt.enums.ClaimType;
+import com.backend.debt.model.entity.ClaimEntity;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
@@ -12,13 +13,11 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @ApiModel(value = "债权详情DTO，包含债权申报的完整信息")
@@ -69,9 +68,40 @@ public class ClaimDetailDto {
   @ApiModelProperty(value = "申报详情列表")
   private List<ClaimFillingDto> claimFillings;
 
-  @ApiModelProperty(value = "债权确认信息列表")
-  private List<ClaimConfirmDto> claimConfirms;
-
   @ApiModelProperty(value = "申报金额汇总")
-  private DeclaredSummaryDto declaredSummary;
+  private ClaimSummaryDto claimSummary;
+
+  public static ClaimDetailDto of(
+      ClaimEntity claimEntity,
+      List<CreditorDto> creditors,
+      List<ClaimFillingDto> claimFillings,
+      ClaimSummaryDto claimSummary) {
+    return ClaimDetailDto.builder()
+        .id(claimEntity.getId())
+        .claimNumber(claimEntity.getClaimNumber())
+        .registrar(claimEntity.getRegistrar())
+        .claimDate(claimEntity.getClaimDate())
+        .claimTypes(ClaimType.ofClaimTypeCodes(claimEntity.getClaimTypes()))
+        .creditors(creditors)
+        .auditor(claimEntity.getAuditor())
+        .claimCategory(claimEntity.getClaimCategory())
+        .materialStatus(claimEntity.getMaterialStatus())
+        .agent(
+            AgentDto.builder()
+                .name(claimEntity.getAgentName())
+                .position(claimEntity.getAgentPosition())
+                .phone(claimEntity.getAgentPhone())
+                .hasVotingRight(claimEntity.getHasVotingRight())
+                .build())
+        .creditorContactInfo(
+            ContactInfoDto.builder()
+                .recipient(claimEntity.getRecipient())
+                .contactPhone(claimEntity.getContactPhone())
+                .mailingAddress(claimEntity.getMailingAddress())
+                .email(claimEntity.getEmail())
+                .build())
+        .claimFillings(claimFillings)
+        .claimSummary(claimSummary)
+        .build();
+  }
 }

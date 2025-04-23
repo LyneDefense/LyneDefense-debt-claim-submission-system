@@ -1,5 +1,6 @@
 package com.backend.debt.model.query;
 
+import com.backend.debt.model.entity.ClaimFillingEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.DecimalMin;
@@ -30,4 +31,16 @@ public class ClaimFillingQuery {
   @ApiModelProperty(example = "200.00")
   @DecimalMin(value = "0", message = "申报其他金额不能小于0")
   private Double claimOther;
+
+  public ClaimFillingEntity to(String id, String claimId) {
+    return ClaimFillingEntity.builder()
+        .id(id)
+        .claimId(claimId)
+        .claimNature(claimNature)
+        .collateralDetails(collateralDetails)
+        .claimPrincipal(claimPrincipal)
+        .claimInterest(claimInterest)
+        .claimOther(claimOther)
+        .build();
+  }
 }

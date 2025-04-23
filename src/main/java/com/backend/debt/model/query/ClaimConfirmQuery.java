@@ -1,6 +1,7 @@
 package com.backend.debt.model.query;
 
 import com.backend.debt.enums.ReviewStatus;
+import com.backend.debt.model.entity.ClaimConfirmEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.DecimalMin;
@@ -42,4 +43,16 @@ public class ClaimConfirmQuery {
   /** 审查理由 */
   @ApiModelProperty(value = "审查理由", example = "债权材料齐全，符合申报要求")
   private String reviewReason;
+
+  public ClaimConfirmEntity to(String claimFillingId) {
+    return ClaimConfirmEntity.builder()
+        .claimFillingId(claimFillingId)
+        .reviewStatus(reviewStatus)
+        .confirmedPrincipal(confirmedPrincipal)
+        .confirmedInterest(confirmedInterest)
+        .confirmedOther(confirmedOther)
+        .claimNature(claimNature)
+        .reviewReason(reviewReason)
+        .build();
+  }
 }

@@ -38,4 +38,4 @@ mybatis-plus:
       id-type: ASSIGN_ID
       logic-delete-value: true
       logic-not-delete-value: false
-  type-aliases-package: com.backend.debt.pojo
+  type-aliases-package: com.backend.debt.model.entity

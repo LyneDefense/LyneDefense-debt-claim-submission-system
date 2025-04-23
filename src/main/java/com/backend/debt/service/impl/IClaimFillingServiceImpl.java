@@ -51,7 +51,7 @@ public class IClaimFillingServiceImpl implements IClaimFillingService {
       // 2. 获取关联的债权ID
       String claimId = fillingEntity.getClaimId();
       // 2.1 校验关联的债权申报记录是否存在
-      ClaimEntity claimEntity = claimService.validateAndGet(claimId);
+      claimService.validateAndGet(claimId);
 
       // 3. 更新债权详情记录
       if (query.getClaimNature() != null) {
@@ -102,13 +102,7 @@ public class IClaimFillingServiceImpl implements IClaimFillingService {
     claimService.validateAndGet(claimId);
 
     try {
-      ClaimFillingEntity fillingEntity = new ClaimFillingEntity();
-      fillingEntity.setClaimNature(query.getClaimNature());
-      fillingEntity.setCollateralDetails(query.getCollateralDetails());
-      fillingEntity.setClaimPrincipal(query.getClaimPrincipal());
-      fillingEntity.setClaimInterest(query.getClaimInterest());
-      fillingEntity.setClaimOther(query.getClaimOther());
-
+      ClaimFillingEntity fillingEntity = query.to(null, claimId);
       claimFillingMapper.insert(fillingEntity);
       log.info("添加债权详情信息成功，ID：{}", fillingEntity.getId());
 

@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 public enum StatisticStatus {
-  CONFIRMED_ALL("CONFIRMED_ALL", "全部确认"),
+  CONFIRM_ALL("CONFIRMED_ALL", "全部确认"),
   CONFIRM_PART("CONFIRM_PART", "部分确认"),
   CONFIRM_SUSPEND("CONFIRM_SUSPEND", "暂缓确认"),
   CONFIRM_REJECT("CONFIRM_REJECT", "不予确认"),

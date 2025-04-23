@@ -33,8 +33,8 @@ public class ClaimFillingController {
   public Resp<Void> addClaimFilling(
       @PathVariable(value = "claim_id") String claimId,
       @Valid @RequestBody ClaimFillingQuery query) {
-    boolean success = claimFillingService.addClaimFilling(claimId, query);
-    return success ? Resp.ok() : Resp.error(500, "添加债权申报金额失败");
+    claimFillingService.addClaimFilling(claimId, query);
+    return Resp.ok();
   }
 
   @ApiOperation(value = "删除债权申报金额信息", notes = "删除特定债权申报金额信息")

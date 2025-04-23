@@ -2,16 +2,14 @@ package com.backend.debt.model.dto;
 
 import com.backend.debt.model.entity.ClaimConfirmEntity;
 import com.backend.debt.model.entity.ClaimFillingEntity;
-import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @ApiModel(value = "债权填报详情DTO")
@@ -47,9 +45,14 @@ public class ClaimFillingDto {
   private ClaimConfirmDto confirmedDetail;
 
   /** 申报金额合计（自动计算字段） */
-  @JsonValue
-  public Double getDeclaredTotal() {
-    return this.claimPrincipal + this.claimInterest + this.claimOther;
+  @JsonProperty("total")
+  public Double getTotal() {
+    return addNullSafe(this.claimPrincipal, addNullSafe(this.claimInterest, this.claimOther));
+  }
+
+  /** 空值安全的加法运算，如果任一参数为null，视为0 */
+  private Double addNullSafe(Double a, Double b) {
+    return (a == null ? 0.0 : a) + (b == null ? 0.0 : b);
   }
 
   public static ClaimFillingDto of(ClaimFillingEntity entity, ClaimConfirmEntity confirmEntity) {

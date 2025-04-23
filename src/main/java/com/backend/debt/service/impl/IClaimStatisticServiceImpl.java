@@ -7,8 +7,7 @@ import com.backend.debt.model.dto.ClaimFillingDto;
 import com.backend.debt.model.dto.confirm.statistic.*;
 import com.backend.debt.service.IClaimFillingService;
 import com.backend.debt.service.IClaimStatisticService;
-import java.util.ArrayList;
-import java.util.Arrays;
+import com.backend.debt.util.StringUtils;
 import java.util.List;
 import javax.annotation.Resource;
 import lombok.RequiredArgsConstructor;
@@ -61,8 +60,22 @@ public class IClaimStatisticServiceImpl implements IClaimStatisticService {
    * @return 如果所有债权都已确认返回true，否则返回false
    */
   private boolean isAllClaimsConfirmed(List<ClaimFillingDto> claimFillings) {
-    return claimFillings.stream()
-        .allMatch(claimFilling -> claimFilling.getConfirmedDetail() != null);
+    if (claimFillings == null || claimFillings.isEmpty()) {
+      return false;
+    }
+    boolean allClaimsConfirmed = true;
+    for (ClaimFillingDto claimFilling : claimFillings) {
+      if (claimFilling.getConfirmedDetail() == null) {
+        allClaimsConfirmed = false;
+        break;
+      }
+      if (claimFilling.getConfirmedDetail().getReviewStatus() != null
+          && claimFilling.getConfirmedDetail().getReviewStatus() == ReviewStatus.NOT_CONFIRMED) {
+        allClaimsConfirmed = false;
+        break;
+      }
+    }
+    return allClaimsConfirmed;
   }
 
   /**
@@ -89,7 +102,7 @@ public class IClaimStatisticServiceImpl implements IClaimStatisticService {
       ClaimConfirmDto claimConfirm = claimFilling.getConfirmedDetail();
 
       switch (claimConfirm.getReviewStatus()) {
-        case CONFIRMED_ALL:
+        case CONFIRM_ALL:
           processAllConfirmed(claimFilling, claimConfirm, confirmedStatistic);
           allConfirmCount++;
           break;
@@ -98,7 +111,7 @@ public class IClaimStatisticServiceImpl implements IClaimStatisticService {
           partConfirmCount++;
           break;
         case CONFIRM_SUSPEND:
-          processSuspendConfirmed(claimConfirm, suspendConfirmStatistic);
+          processSuspendConfirmed(claimFilling, claimConfirm, suspendConfirmStatistic);
           suspendCount++;
           break;
         case CONFIRM_REJECT:
@@ -118,16 +131,17 @@ public class IClaimStatisticServiceImpl implements IClaimStatisticService {
       ClaimConfirmDto claimConfirm,
       ConfirmedStatisticDto confirmedStatistic) {
     confirmedStatistic.setPrincipal(
-        confirmedStatistic.getPrincipal() + claimConfirm.getConfirmedPrincipal());
+        addNullSafe(confirmedStatistic.getPrincipal(), claimConfirm.getConfirmedPrincipal()));
     confirmedStatistic.setInterest(
-        confirmedStatistic.getInterest() + claimConfirm.getConfirmedInterest());
-    confirmedStatistic.setOther(confirmedStatistic.getOther() + claimConfirm.getConfirmedOther());
-    confirmedStatistic.setCount(confirmedStatistic.getCount() + 1);
+        addNullSafe(confirmedStatistic.getInterest(), claimConfirm.getConfirmedInterest()));
+    confirmedStatistic.setOther(
+        addNullSafe(confirmedStatistic.getOther(), claimConfirm.getConfirmedOther()));
+    confirmedStatistic.setCount(incrementNullSafe(confirmedStatistic.getCount()));
     confirmedStatistic.setCollateralDetails(
-        this.stringAdd(
+        StringUtils.stringAdd(
             confirmedStatistic.getCollateralDetails(), claimFilling.getCollateralDetails()));
     confirmedStatistic.setConfirmNature(
-        this.stringAdd(
+        StringUtils.stringAdd(
             confirmedStatistic.getConfirmNature(),
             claimFilling.getConfirmedDetail().getClaimNature()));
   }
@@ -138,34 +152,44 @@ public class IClaimStatisticServiceImpl implements IClaimStatisticService {
       ClaimConfirmDto claimConfirm,
       ConfirmedStatisticDto confirmedStatistic) {
     confirmedStatistic.setPrincipal(
-        confirmedStatistic.getPrincipal() + claimConfirm.getConfirmedPrincipal());
+        addNullSafe(confirmedStatistic.getPrincipal(), claimConfirm.getConfirmedPrincipal()));
     confirmedStatistic.setInterest(
-        confirmedStatistic.getInterest() + claimConfirm.getConfirmedInterest());
-    confirmedStatistic.setOther(confirmedStatistic.getOther() + claimConfirm.getConfirmedOther());
-    confirmedStatistic.setCount(confirmedStatistic.getCount() + 1);
+        addNullSafe(confirmedStatistic.getInterest(), claimConfirm.getConfirmedInterest()));
+    confirmedStatistic.setOther(
+        addNullSafe(confirmedStatistic.getOther(), claimConfirm.getConfirmedOther()));
+    confirmedStatistic.setCount(incrementNullSafe(confirmedStatistic.getCount()));
     Double deduce =
-        claimFilling.getDeclaredTotal() - claimFilling.getConfirmedDetail().getConfirmedTotal();
+        subtractNullSafe(
+            claimFilling.getTotal(), claimFilling.getConfirmedDetail().getConfirmedTotal());
     confirmedStatistic.setConfirmNature(
-        this.stringAdd(
+        StringUtils.stringAdd(
             confirmedStatistic.getConfirmNature(),
             claimFilling.getConfirmedDetail().getClaimNature()));
     confirmedStatistic.setCollateralDetails(
-        this.stringAdd(
+        StringUtils.stringAdd(
             confirmedStatistic.getCollateralDetails(), claimFilling.getCollateralDetails()));
-    confirmedStatistic.setDeductionAmount(confirmedStatistic.getDeductionAmount() + deduce);
+    confirmedStatistic.setDeductionAmount(
+        addNullSafe(confirmedStatistic.getDeductionAmount(), deduce));
+    confirmedStatistic.setConfirmNature(
+        StringUtils.stringAdd(
+            confirmedStatistic.getConfirmNature(), claimConfirm.getClaimNature()));
   }
 
   /** 处理暂缓确认的债权。 */
   private void processSuspendConfirmed(
-      ClaimConfirmDto claimConfirm, SuspendConfirmStatisticDto suspendConfirmStatistic) {
+      ClaimFillingDto claimFilling,
+      ClaimConfirmDto claimConfirm,
+      SuspendConfirmStatisticDto suspendConfirmStatistic) {
     suspendConfirmStatistic.setPrincipal(
-        suspendConfirmStatistic.getPrincipal() + claimConfirm.getConfirmedPrincipal());
+        addNullSafe(suspendConfirmStatistic.getPrincipal(), claimFilling.getClaimPrincipal()));
     suspendConfirmStatistic.setInterest(
-        suspendConfirmStatistic.getInterest() + claimConfirm.getConfirmedInterest());
+        addNullSafe(suspendConfirmStatistic.getInterest(), claimFilling.getClaimInterest()));
     suspendConfirmStatistic.setOther(
-        suspendConfirmStatistic.getOther() + claimConfirm.getConfirmedOther());
-    suspendConfirmStatistic.setCount(suspendConfirmStatistic.getCount() + 1);
-    suspendConfirmStatistic.setSuspendNature(ReviewStatus.CONFIRM_SUSPEND.getDisplayName());
+        addNullSafe(suspendConfirmStatistic.getOther(), claimFilling.getClaimOther()));
+    suspendConfirmStatistic.setCount(incrementNullSafe(suspendConfirmStatistic.getCount()));
+    suspendConfirmStatistic.setSuspendNature(
+        StringUtils.stringAdd(
+            suspendConfirmStatistic.getSuspendNature(), claimConfirm.getClaimNature()));
   }
 
   /** 处理拒绝确认的债权。 */
@@ -174,14 +198,19 @@ public class IClaimStatisticServiceImpl implements IClaimStatisticService {
       ClaimConfirmDto claimConfirm,
       ConfirmedStatisticDto confirmedStatistic,
       RejectConfirmStatisticDto rejectConfirmStatistic) {
-    Double deduce = claimFilling.getDeclaredTotal();
-    confirmedStatistic.setDeductionAmount(confirmedStatistic.getDeductionAmount() + deduce);
+    Double deduce = claimFilling.getTotal();
+    confirmedStatistic.setDeductionAmount(
+        addNullSafe(confirmedStatistic.getDeductionAmount(), deduce));
     rejectConfirmStatistic.setInterest(
-        rejectConfirmStatistic.getInterest() + claimFilling.getClaimInterest());
+        addNullSafe(rejectConfirmStatistic.getInterest(), claimFilling.getClaimInterest()));
     rejectConfirmStatistic.setPrincipal(
-        rejectConfirmStatistic.getPrincipal() + claimFilling.getClaimPrincipal());
+        addNullSafe(rejectConfirmStatistic.getPrincipal(), claimFilling.getClaimPrincipal()));
     rejectConfirmStatistic.setOther(
-        rejectConfirmStatistic.getOther() + claimFilling.getClaimOther());
+        addNullSafe(rejectConfirmStatistic.getOther(), claimFilling.getClaimOther()));
+    rejectConfirmStatistic.setCount(incrementNullSafe(rejectConfirmStatistic.getCount()));
+    rejectConfirmStatistic.setRejectReason(
+        StringUtils.stringAdd(
+            rejectConfirmStatistic.getRejectReason(), claimConfirm.getReviewReason()));
   }
 
   /**
@@ -208,7 +237,7 @@ public class IClaimStatisticServiceImpl implements IClaimStatisticService {
 
     if (allConfirmCount == totalClaims) {
       return new ClaimConfirmStatisticDto(
-          List.of(StatisticStatus.CONFIRMED_ALL), confirmedStatistic, null, null);
+          List.of(StatisticStatus.CONFIRM_ALL), confirmedStatistic, null, null);
     }
     if (rejectCount == totalClaims) {
       return new ClaimConfirmStatisticDto(
@@ -224,10 +253,7 @@ public class IClaimStatisticServiceImpl implements IClaimStatisticService {
 
     ClaimConfirmStatisticDto dto =
         new ClaimConfirmStatisticDto(
-            List.of(StatisticStatus.CONFIRM_PART, StatisticStatus.CONFIRM_SUSPEND),
-            confirmedStatistic,
-            null,
-            null);
+            List.of(StatisticStatus.CONFIRM_PART), confirmedStatistic, null, null);
 
     if (partConfirmCount > 0 && suspendCount > 0) {
       dto.setStatisticStatus(
@@ -239,31 +265,34 @@ public class IClaimStatisticServiceImpl implements IClaimStatisticService {
   }
 
   /**
-   * 将字符串添加到源字符串中，处理空值和重复值。 字符串使用"、"作为分隔符连接。
+   * 空值安全的加法运算，如果任一参数为null，视为0
    *
-   * @param source 要添加到的源字符串
-   * @param toAdd 要添加的字符串
-   * @return 去重后的组合字符串
+   * @param a 第一个操作数
+   * @param b 第二个操作数
+   * @return 两数之和，任一为null则视为0
    */
-  public String stringAdd(String source, String toAdd) {
-    if (source == null) {
-      source = "";
-    }
+  private Double addNullSafe(Double a, Double b) {
+    return (a == null ? 0.0 : a) + (b == null ? 0.0 : b);
+  }
 
-    if (toAdd == null || toAdd.isEmpty()) {
-      return source;
-    }
+  /**
+   * 空值安全的减法运算，如果任一参数为null，视为0
+   *
+   * @param a 被减数
+   * @param b 减数
+   * @return 减法结果，任一为null则视为0
+   */
+  private Double subtractNullSafe(Double a, Double b) {
+    return (a == null ? 0.0 : a) - (b == null ? 0.0 : b);
+  }
 
-    // 分割字符串并过滤空值
-    List<String> list = new ArrayList<>(Arrays.asList(source.split("、")));
-    list.removeIf(String::isEmpty);
-
-    // 判断并去重添加
-    if (!list.contains(toAdd)) {
-      list.add(toAdd);
-    }
-
-    // 空列表直接返回 toAdd（兼容原逻辑）
-    return String.join("、", list);
+  /**
+   * 空值安全的Integer递增运算，如果值为null，视为0再递增
+   *
+   * @param value 要递增的值
+   * @return 递增后的结果，原值为null则返回1
+   */
+  private Integer incrementNullSafe(Integer value) {
+    return (value == null ? 0 : value) + 1;
   }
 }

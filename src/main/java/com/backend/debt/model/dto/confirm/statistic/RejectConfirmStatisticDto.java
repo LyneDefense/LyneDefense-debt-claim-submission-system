@@ -3,6 +3,9 @@ package com.backend.debt.model.dto.confirm.statistic;
 import com.backend.debt.enums.ReviewStatus;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,8 +32,16 @@ public class RejectConfirmStatisticDto {
   /** 不予确认原因 */
   private String rejectReason;
 
-  private Double getTotal() {
-    return this.principal + this.interest + this.other;
+  @JsonProperty("total")
+  public Double getTotal() {
+    return addNullSafe(this.principal, addNullSafe(this.interest, this.other));
+  }
+
+  /**
+   * 空值安全的加法运算，如果任一参数为null，视为0
+   */
+  private Double addNullSafe(Double a, Double b) {
+    return (a == null ? 0.0 : a) + (b == null ? 0.0 : b);
   }
 
   public static RejectConfirmStatisticDto defaultEmpty() {

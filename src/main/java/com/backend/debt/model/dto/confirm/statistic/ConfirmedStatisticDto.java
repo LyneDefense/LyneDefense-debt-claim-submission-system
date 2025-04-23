@@ -1,5 +1,8 @@
 package com.backend.debt.model.dto.confirm.statistic;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,7 +35,15 @@ public class ConfirmedStatisticDto {
   /** 削减金额 */
   private Double deductionAmount;
 
-  private Double getTotal() {
-    return this.principal + this.interest + this.other;
+  @JsonProperty("total")
+  public Double getTotal() {
+    return addNullSafe(this.principal, addNullSafe(this.interest, this.other));
+  }
+
+  /**
+   * 空值安全的加法运算，如果任一参数为null，视为0
+   */
+  private Double addNullSafe(Double a, Double b) {
+    return (a == null ? 0.0 : a) + (b == null ? 0.0 : b);
   }
 }

@@ -1,5 +1,6 @@
 package com.backend.debt.service.impl;
 
+import com.backend.debt.enums.ReviewStatus;
 import com.backend.debt.exceptions.CustomException;
 import com.backend.debt.exceptions.HttpResponseStatus;
 import com.backend.debt.mapper.ClaimConfirmMapper;
@@ -11,6 +12,7 @@ import com.backend.debt.service.IClaimConfirmService;
 import com.backend.debt.service.IClaimFillingService;
 import com.backend.debt.service.IClaimService;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -41,17 +43,8 @@ public class IClaimConfirmServiceImpl implements IClaimConfirmService {
       ClaimFillingEntity fillingEntity = claimFillingService.validateAndGet(claimFillingId);
       String claimId = fillingEntity.getClaimId();
       claimService.validateAndGet(claimId);
-
-      ClaimConfirmEntity confirmEntity = new ClaimConfirmEntity();
-      confirmEntity.setClaimFillingId(claimFillingId);
-      // 5. 设置债权确认信息
-      confirmEntity.setReviewStatus(query.getReviewStatus());
-      confirmEntity.setConfirmedPrincipal(query.getConfirmedPrincipal());
-      confirmEntity.setConfirmedInterest(query.getConfirmedInterest());
-      confirmEntity.setConfirmedOther(query.getConfirmedOther());
-      confirmEntity.setClaimNature(query.getClaimNature());
-      confirmEntity.setReviewReason(query.getReviewReason());
-
+      this.validate(fillingEntity, query);
+      ClaimConfirmEntity confirmEntity = query.to(claimFillingId);
       claimConfirmMapper.insert(confirmEntity);
       log.info("添加债权确认信息成功，ID：{}", confirmEntity.getId());
 
@@ -78,6 +71,7 @@ public class IClaimConfirmServiceImpl implements IClaimConfirmService {
     ClaimConfirmEntity updateEntity = this.validateAndGet(claimConfirmId);
     ClaimFillingEntity fillingEntity =
         claimFillingService.validateAndGet(updateEntity.getClaimFillingId());
+    this.validate(fillingEntity, query);
     // 更新确认实体
     updateEntity.setId(claimConfirmId);
     // 只更新非空字段，避免覆盖现有数据
@@ -131,5 +125,57 @@ public class IClaimConfirmServiceImpl implements IClaimConfirmService {
           HttpResponseStatus.NOT_FOUND.code(), "债权确认记录不存在", "删除债权确认信息失败，ID不存在：" + claimConfirmId);
     }
     return confirmEntity;
+  }
+
+  private void validate(ClaimFillingEntity fillingEntity, ClaimConfirmQuery query) {
+    // 如果确认状态是全部确认
+    if (query.getReviewStatus() == ReviewStatus.CONFIRM_ALL) {
+      // 确认的本金、利息和其他金额必须等于申报的金额
+      if (!Objects.equals(fillingEntity.getClaimPrincipal(), query.getConfirmedPrincipal())) {
+        throw new CustomException(
+            HttpResponseStatus.BAD_REQUEST.code(),
+            "确认状态为全部确认，债权确认本金金额不匹配",
+            "确认状态为全部确认，债权确认本金金额不匹配");
+      }
+      if (!Objects.equals(fillingEntity.getClaimInterest(), query.getConfirmedInterest())) {
+        throw new CustomException(
+            HttpResponseStatus.BAD_REQUEST.code(),
+            "确认状态为全部确认，债权确认利息金额不匹配",
+            "确认状态为全部确认，债权确认本金金额不匹配");
+      }
+      if (!Objects.equals(fillingEntity.getClaimOther(), query.getConfirmedOther())) {
+        throw new CustomException(
+            HttpResponseStatus.BAD_REQUEST.code(),
+            "确认状态为全部确认，债权确认其他金额不匹配",
+            "确认状态为全部确认，债权确认本金金额不匹配");
+      }
+    }
+    if (query.getReviewStatus() == ReviewStatus.CONFIRM_PART) {
+      // 如果是部分确认，确认的金额必须小于等于申报的金额
+      if (query.getConfirmedPrincipal() > fillingEntity.getClaimPrincipal()
+          || query.getConfirmedInterest() > fillingEntity.getClaimInterest()
+          || query.getConfirmedOther() > fillingEntity.getClaimOther()) {
+        throw new CustomException(
+            HttpResponseStatus.BAD_REQUEST.code(), "债权确认金额超过申报金额", "债权确认金额超过申报金额");
+      }
+    }
+    if (query.getReviewStatus() == ReviewStatus.CONFIRM_REJECT) {
+      // 如果是拒绝确认，确认的金额必须为0或者Null
+      if ((query.getConfirmedPrincipal() != null && query.getConfirmedPrincipal() != 0)
+          || (query.getConfirmedInterest() != null && query.getConfirmedInterest() != 0)
+          || (query.getConfirmedOther() != null && query.getConfirmedOther() != 0)) {
+        throw new CustomException(
+            HttpResponseStatus.BAD_REQUEST.code(), "拒绝确认时，债权确认金额必须为0或为NULL", "拒绝确认时，债权确认金额必须为0");
+      }
+    }
+    if (query.getReviewStatus() == ReviewStatus.CONFIRM_SUSPEND) {
+      // 如果是暂缓确认，确认的金额必须为0或者Null
+      if ((query.getConfirmedPrincipal() != null && query.getConfirmedPrincipal() != 0)
+          || (query.getConfirmedInterest() != null && query.getConfirmedInterest() != 0)
+          || (query.getConfirmedOther() != null && query.getConfirmedOther() != 0)) {
+        throw new CustomException(
+            HttpResponseStatus.BAD_REQUEST.code(), "暂缓确认时，债权确认金额必须为0或为NULL", "拒绝确认时，债权确认金额必须为0");
+      }
+    }
   }
 }

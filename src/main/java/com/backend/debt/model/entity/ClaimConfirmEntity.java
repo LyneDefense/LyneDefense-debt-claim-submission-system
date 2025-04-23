@@ -4,14 +4,16 @@ import com.backend.debt.enums.ReviewStatus;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import lombok.experimental.Accessors;
 
 /** 审查确认情况实体类 */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @TableName("claim_confirm")
 public class ClaimConfirmEntity extends BaseEntity {
 

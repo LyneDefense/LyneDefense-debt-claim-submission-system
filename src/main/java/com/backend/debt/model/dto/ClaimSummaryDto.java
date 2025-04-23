@@ -2,17 +2,15 @@ package com.backend.debt.model.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @ApiModel(value = "债权申报金额汇总DTO")
-public class DeclaredSummaryDto {
+public class ClaimSummaryDto {
 
   /** 申报本金合计 */
   @ApiModelProperty(value = "本金总额", example = "50000.00")
@@ -29,13 +27,12 @@ public class DeclaredSummaryDto {
   /** 笔数 */
   private Integer count;
 
-  /** 担保物明细 */
-  private String collateralDetails;
-
   /** 债权性质 */
   private String claimNature;
 
   /** 申报总金额（自动计算字段） */
   @ApiModelProperty(value = "总计金额", example = "53500.00")
-  private Double total;
+  public Double getTotal() {
+    return this.totalPrincipal + this.totalInterest + this.totalOther;
+  }
 }
