@@ -2,7 +2,10 @@ package com.backend.debt.config;
 
 import cn.hutool.core.date.StopWatch;
 import cn.hutool.json.JSONUtil;
-import java.util.Arrays;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import javax.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -13,17 +16,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import jakarta.servlet.http.HttpServletRequest;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-
 /**
  * 日志切面配置
- * <p>
- * 该类使用AOP技术，用于记录API接口的调用日志，包括接口名称、请求参数、返回结果和执行时间。
- * 通过该切面可以集中处理日志记录逻辑，而不需要在每个控制器方法中添加日志代码。
- * </p>
+ *
+ * <p>该类使用AOP技术，用于记录API接口的调用日志，包括接口名称、请求参数、返回结果和执行时间。 通过该切面可以集中处理日志记录逻辑，而不需要在每个控制器方法中添加日志代码。
  */
 @Aspect
 @Component
@@ -45,29 +41,30 @@ public class LogAspect {
     String methodName = method.getName();
     String className = joinPoint.getTarget().getClass().getSimpleName();
     Object[] args = joinPoint.getArgs();
-    
+
     // 获取请求信息
     HttpServletRequest request = null;
-    ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+    ServletRequestAttributes attributes =
+        (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
     if (attributes != null) {
       request = attributes.getRequest();
     }
-    
+
     // 记录请求日志
     StopWatch stopWatch = new StopWatch();
     stopWatch.start();
-    
+
     StringBuilder logMessage = new StringBuilder();
     logMessage.append("\n========== 请求开始 ==========\n");
     logMessage.append("API: ").append(className).append(".").append(methodName).append("\n");
-    
+
     // 记录请求路径和方法
     if (request != null) {
       logMessage.append("请求路径: ").append(request.getRequestURI()).append("\n");
       logMessage.append("请求方法: ").append(request.getMethod()).append("\n");
       logMessage.append("来源IP: ").append(getClientIp(request)).append("\n");
     }
-    
+
     // 格式化请求参数
     logMessage.append("请求参数: ");
     if (args != null && args.length > 0) {
@@ -87,14 +84,14 @@ public class LogAspect {
     } else {
       logMessage.append("无");
     }
-    
+
     log.info(logMessage.toString());
-    
+
     // 执行原方法
     Object result = null;
     try {
       result = joinPoint.proceed();
-      
+
       // 记录响应日志
       stopWatch.stop();
       StringBuilder responseLog = new StringBuilder();
@@ -102,7 +99,7 @@ public class LogAspect {
       responseLog.append("API: ").append(className).append(".").append(methodName).append("\n");
       responseLog.append("执行时间: ").append(stopWatch.getTotalTimeMillis()).append(" ms\n");
       responseLog.append("响应结果: ");
-      
+
       if (result != null) {
         try {
           // 简化输出，避免过长日志
@@ -118,19 +115,28 @@ public class LogAspect {
       } else {
         responseLog.append("无");
       }
-      
+
       log.info(responseLog.toString());
       return result;
     } catch (Throwable e) {
       stopWatch.stop();
-      log.error("\n========== 请求异常 ==========\n" +
-                "API: " + className + "." + methodName + "\n" +
-                "执行时间: " + stopWatch.getTotalTimeMillis() + " ms\n" +
-                "异常信息: " + e.getMessage(), e);
+      log.error(
+          "\n========== 请求异常 ==========\n"
+              + "API: "
+              + className
+              + "."
+              + methodName
+              + "\n"
+              + "执行时间: "
+              + stopWatch.getTotalTimeMillis()
+              + " ms\n"
+              + "异常信息: "
+              + e.getMessage(),
+          e);
       throw e;
     }
   }
-  
+
   /**
    * 检查参数是否有指定注解
    *
@@ -141,7 +147,7 @@ public class LogAspect {
   private boolean hasAnnotation(Parameter parameter, Class<? extends Annotation> annotationClass) {
     return parameter.getAnnotation(annotationClass) != null;
   }
-  
+
   /**
    * 获取客户端真实IP地址
    *

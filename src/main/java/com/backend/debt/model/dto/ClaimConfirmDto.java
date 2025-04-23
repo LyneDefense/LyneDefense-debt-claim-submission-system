@@ -3,7 +3,8 @@ package com.backend.debt.model.dto;
 import com.backend.debt.enums.ReviewStatus;
 import com.backend.debt.model.entity.ClaimConfirmEntity;
 import com.backend.debt.model.entity.ClaimFillingEntity;
-import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,41 +15,41 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "债权确认信息DTO")
+@ApiModel(description = "债权确认信息DTO")
 public class ClaimConfirmDto {
 
-  @Schema(description = "主键ID", example = "1234567890abcdef")
+  @ApiModelProperty(example = "1234567890abcdef")
   private String id;
 
-  @Schema(description = "关联的债权填报ID", example = "1234567890abcdef")
+  @ApiModelProperty(example = "1234567890abcdef")
   private String claimFillingId;
 
   /** 审计状态 */
-  @Schema(description = "审计状态", example = "CONFIRMED")
+  @ApiModelProperty(example = "CONFIRMED")
   private ReviewStatus reviewStatus;
 
   /** 确认本金 */
-  @Schema(description = "确认本金", example = "10000.00")
+  @ApiModelProperty(example = "10000.00")
   private Double confirmedPrincipal;
 
   /** 确认利息 */
-  @Schema(description = "确认利息", example = "500.00")
+  @ApiModelProperty(example = "500.00")
   private Double confirmedInterest;
 
   /** 确认其他金额 */
-  @Schema(description = "确认其他金额", example = "200.00")
+  @ApiModelProperty(example = "200.00")
   private Double confirmedOther;
 
   /** 确认债权性质 */
-  @Schema(description = "确认债权性质", example = "普通债权")
+  @ApiModelProperty(example = "普通债权")
   private String claimNature;
 
   /** 确认时削减金额 */
-  @Schema(description = "确认时削减金额", example = "100.00")
+  @ApiModelProperty(example = "100.00")
   private Double deductionAmount;
 
   /** 审查理由 */
-  @Schema(description = "审查理由", example = "债权材料齐全，符合申报要求")
+  @ApiModelProperty(value = "审查理由", example = "债权材料齐全，符合申报要求")
   private String reviewReason;
 
   public Double getConfirmedTotal() {

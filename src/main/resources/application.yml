@@ -22,13 +22,8 @@ spring:
     multipart:
       max-file-size: 128MB  # ?????????
       max-request-size: 128MB  # ????????
-springdoc:
-  api-docs:
-    enabled: true
-  swagger-ui:
-    path: /swagger-ui.html
-    tags-sorter: alpha
-    operations-sorter: alpha
+swagger:
+  enable: true
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml
@@ -44,6 +39,3 @@ mybatis-plus:
       logic-delete-value: true
       logic-not-delete-value: false
   type-aliases-package: com.backend.debt.pojo
-
-swagger:
-  enable: true

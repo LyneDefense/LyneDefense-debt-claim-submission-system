@@ -1,10 +1,11 @@
 package com.backend.debt.model.dto;
 
-import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import javax.validation.constraints.NotEmpty;
 
 @Getter
 @Setter
@@ -13,7 +14,8 @@ import lombok.Setter;
 public class AgentDto {
 
     /** 代理人姓名 */
-    @NotEmpty private String name;
+    @NotEmpty
+    private String name;
 
     /** 代理人职务 */
     private String position;

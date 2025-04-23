@@ -5,12 +5,13 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
-import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import java.time.LocalDate;
 import java.util.List;
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,62 +21,57 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "债权详情DTO，包含债权申报的完整信息")
+@ApiModel(value = "债权详情DTO，包含债权申报的完整信息")
 public class ClaimDetailDto {
 
-  @Schema(description = "债权ID", example = "1234567890abcdef")
+  @ApiModelProperty(value = "债权ID", example = "1234567890abcdef")
   private String id;
 
-  @Schema(description = "债权编号", required = true, example = "CLAIM-2023-001")
+  @ApiModelProperty(value = "债权编号", required = true, example = "CLAIM-2023-001")
   @NotNull
   @NotEmpty
   private String claimNumber;
 
-  @Schema(description = "登记人", required = true, example = "张三")
+  @ApiModelProperty(value = "登记人", required = true, example = "张三")
   @NotNull
   @NotEmpty
   private String registrar;
 
-  @Schema(
-      description = "申报日期",
-      required = true,
-      type = "string",
-      example = "2023-01-01",
-      format = "date")
+  @ApiModelProperty(value = "申报日期", required = true, example = "2023-01-01")
   @NotNull
   @JsonDeserialize(using = LocalDateDeserializer.class)
   @JsonSerialize(using = LocalDateSerializer.class)
   private LocalDate claimDate;
 
-  @Schema(description = "申报形式", required = true)
+  @ApiModelProperty(value = "申报形式", required = true)
   @NotEmpty
   private List<ClaimType> claimTypes;
 
-  @Schema(description = "债权人信息列表")
+  @ApiModelProperty(value = "债权人信息列表")
   private List<CreditorDto> creditors;
 
-  @Schema(description = "分配审核人员", example = "李四")
+  @ApiModelProperty(value = "分配审核人员", example = "李四")
   private String auditor;
 
-  @Schema(description = "债权归类", example = "普通债权")
+  @ApiModelProperty(value = "债权归类", example = "普通债权")
   private String claimCategory;
 
-  @Schema(description = "材料提交情况", example = "已提交全部材料")
+  @ApiModelProperty(value = "材料提交情况", example = "已提交全部材料")
   private String materialStatus;
 
-  @Schema(description = "代理人信息")
+  @ApiModelProperty(value = "代理人信息")
   private AgentDto agent;
 
-  @Schema(description = "收件信息")
+  @ApiModelProperty(value = "收件信息")
   @Valid
   private ContactInfoDto creditorContactInfo;
 
-  @Schema(description = "申报详情列表")
+  @ApiModelProperty(value = "申报详情列表")
   private List<ClaimFillingDto> claimFillings;
 
-  @Schema(description = "债权确认信息列表")
+  @ApiModelProperty(value = "债权确认信息列表")
   private List<ClaimConfirmDto> claimConfirms;
 
-  @Schema(description = "申报金额汇总")
+  @ApiModelProperty(value = "申报金额汇总")
   private DeclaredSummaryDto declaredSummary;
 }

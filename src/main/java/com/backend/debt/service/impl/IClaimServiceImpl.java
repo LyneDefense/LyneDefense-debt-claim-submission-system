@@ -23,12 +23,12 @@ import com.backend.debt.model.page.PageResult;
 import com.backend.debt.model.query.ClaimQuery;
 import com.backend.debt.model.query.ClaimSimplePageQuery;
 import com.backend.debt.service.IClaimService;
-import jakarta.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -41,7 +41,8 @@ import org.springframework.util.StringUtils;
 @Service
 public class IClaimServiceImpl implements IClaimService {
 
-  @Resource private ClaimMapper claimMapper;
+  @Resource
+  private ClaimMapper claimMapper;
   @Resource private CreditorMapper creditorMapper;
   @Resource private ClaimFillingMapper claimFillingMapper;
   @Resource private ClaimConfirmMapper claimConfirmMapper;

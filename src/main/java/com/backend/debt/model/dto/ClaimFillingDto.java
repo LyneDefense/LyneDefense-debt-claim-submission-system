@@ -3,7 +3,8 @@ package com.backend.debt.model.dto;
 import com.backend.debt.model.entity.ClaimConfirmEntity;
 import com.backend.debt.model.entity.ClaimFillingEntity;
 import com.fasterxml.jackson.annotation.JsonValue;
-import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,33 +14,33 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "债权填报详情DTO")
+@ApiModel(value = "债权填报详情DTO")
 public class ClaimFillingDto {
 
-  @Schema(description = "主键ID", example = "1234567890abcdef")
+  @ApiModelProperty(value = "主键ID", example = "1234567890abcdef")
   private String id;
 
-  @Schema(description = "关联的债权ID", example = "1234567890abcdef")
+  @ApiModelProperty(value = "关联的债权ID", example = "1234567890abcdef")
   private String claimId;
 
   /** 申报债权性质 */
-  @Schema(description = "申报债权性质", example = "普通债权")
+  @ApiModelProperty(value = "申报债权性质", example = "普通债权")
   private String claimNature;
 
   /** 担保物明细 */
-  @Schema(description = "担保物明细", example = "房屋、土地等资产")
+  @ApiModelProperty(value = "担保物明细", example = "房屋、土地等资产")
   private String collateralDetails;
 
   /** 申报本金金额 */
-  @Schema(description = "申报本金", example = "10000.00")
+  @ApiModelProperty(value = "申报本金", example = "10000.00")
   private Double claimPrincipal;
 
   /** 申报利息金额 */
-  @Schema(description = "申报利息", example = "500.00")
+  @ApiModelProperty(value = "申报利息", example = "500.00")
   private Double claimInterest;
 
   /** 申报其他项目金额 */
-  @Schema(description = "申报其他金额", example = "200.00")
+  @ApiModelProperty(value = "申报其他金额", example = "200.00")
   private Double claimOther;
 
   /** 确认部分详情 */

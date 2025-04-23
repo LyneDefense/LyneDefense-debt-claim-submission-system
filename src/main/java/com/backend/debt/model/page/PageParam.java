@@ -1,9 +1,10 @@
 package com.backend.debt.model.page;
 
-import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import lombok.Getter;
 import lombok.Setter;
+
+import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
