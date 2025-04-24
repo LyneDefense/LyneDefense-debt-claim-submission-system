@@ -9,6 +9,3 @@ spring:
   flyway:
     clean-disabled: true
     enabled: true
-springdoc:
-  api-docs:
-    enabled: true
